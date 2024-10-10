@@ -1,0 +1,32 @@
+# Directorios dependientes de Go
+/vendor/
+/bin/
+/pkg/
+
+# Archivos y directorios de compilación
+*.exe
+*.out
+*.test
+
+# Archivos de Go mod y sum, excepto go.mod
+/go.sum
+
+# Archivos temporales de editores
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.bak
+*.log
+
+# Archivos de configuraciones de entornos
+.env
+
+# Cobertura de tests
+coverage.out
+
+# Archivos de módulos externos
+/external/
