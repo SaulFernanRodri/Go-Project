@@ -8,6 +8,6 @@ Este proyecto es un backend construido con **Go** utilizando el framework **Gin*
 - Arquitectura basada en controladores, servicios y repositorios.
 - Soporte para middlewares personalizados.
 - Configuración de rutas versionadas (v1, v2).
-- Conexión a bases de datos (puedes especificar qué base de datos usas).
+- Conexión a bases de datos Postgres
 - Migraciones de base de datos.
 - Soporte para autenticación, manejo de errores y más.
