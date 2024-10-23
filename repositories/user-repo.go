@@ -6,6 +6,14 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepoInterface interface {
+	GetAll() ([]models.User, error)
+	Create(user *models.User) error
+	Update(id uint64, user *models.User) (*models.User, error)
+	Delete(id uint64) error
+	FindByEmail(email string, user *models.User) error
+}
+
 type UserRepo struct {
 	db *gorm.DB
 }
@@ -24,7 +32,7 @@ func (r *UserRepo) Create(user *models.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *UserRepo) Update(id string, user *models.User) (*models.User, error) {
+func (r *UserRepo) Update(id uint64, user *models.User) (*models.User, error) {
 	var existingUser models.User
 	if err := r.db.First(&existingUser, id).Error; err != nil {
 		return nil, err
@@ -43,6 +51,10 @@ func (r *UserRepo) Update(id string, user *models.User) (*models.User, error) {
 	return &existingUser, nil
 }
 
-func (r *UserRepo) Delete(id string) error {
+func (r *UserRepo) Delete(id uint64) error {
 	return r.db.Delete(&models.User{}, id).Error
+}
+
+func (repo *UserRepo) FindByEmail(email string, user *models.User) error {
+	return repo.db.Where("email = ?", email).First(user).Error
 }
