@@ -11,21 +11,21 @@ func SetupRouter(userController *controllers.UserController) *gin.Engine {
 
 	router := gin.Default()
 
-	router.Use(middlewares.BasicAuth())
-
 	router.LoadHTMLGlob("templates/*")
 
+	router.Use(middlewares.BasicAuth())
+
 	router.POST("/login", userController.Login)
+	router.POST("/register", userController.CreateUser)
 
 	userRoutes := router.Group("/users", middlewares.AuthJWT())
 	{
 		userRoutes.GET("/", userController.GetAllUsers)
-		userRoutes.POST("/", userController.CreateUser)
 		userRoutes.PUT("/:id", userController.UpdateUser)
 		userRoutes.DELETE("/:id", userController.DeleteUser)
 	}
 
-	viewRoutes := router.Group("/s")
+	viewRoutes := router.Group("/view")
 	{
 		viewRoutes.GET("/users", userController.ShowAllUsers)
 	}

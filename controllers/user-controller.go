@@ -87,6 +87,7 @@ func (ctrl *UserController) ShowAllUsers(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{"error": err.Error()})
 		return
 	}
+
 	c.HTML(http.StatusOK, "users.html", gin.H{"users": users})
 }
 
