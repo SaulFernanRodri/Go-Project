@@ -5,7 +5,7 @@ import (
 	"myproject/controllers"
 	"myproject/internal/database"
 	"myproject/repositories"
-	"myproject/routes"
+	"myproject/routers"
 	"myproject/services"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +20,7 @@ func InitializeApp() *gin.Engine {
 	userService := services.NewUserService(userRepo)
 	userController := controllers.NewUserController(userService)
 
-	router := routes.SetupRouter(userController)
+	router := routers.SetupRouter(userController)
 
 	return router
 }

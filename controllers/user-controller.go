@@ -34,6 +34,13 @@ func (ctrl *UserController) ShowAllUsers(c *gin.Context) {
 	c.HTML(http.StatusOK, "users.html", gin.H{"users": users})
 }
 
+// @Summary Get all users
+// @Description Get all users
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.User
+// @Router /users [get]
 func (ctrl *UserController) GetAllUsers(c *gin.Context) {
 	username := c.GetHeader("X-Auth-Username")
 	if username == "" {
@@ -49,6 +56,14 @@ func (ctrl *UserController) GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+// @Summary Create a user
+// @Description Create a user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body models.UserRequest true "User object"
+// @Success 201 {object} models.User
+// @Router /users [post]
 func (ctrl *UserController) CreateUser(c *gin.Context) {
 	username := c.GetHeader("X-Auth-Username")
 	if username == "" {
@@ -73,6 +88,14 @@ func (ctrl *UserController) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdUser)
 }
 
+// @Summary Update a user
+// @Description Update a user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param user body models.UserRequest true "User object"
+// @Success 200 {object} models.User
 func (ctrl *UserController) UpdateUser(c *gin.Context) {
 	username := c.GetHeader("X-Auth-Username")
 	if username == "" {
@@ -118,6 +141,14 @@ func (ctrl *UserController) UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedUser)
 }
 
+// @Summary Delete a user
+// @Description Delete a user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {string} string
+// @Router /users/{id} [delete]
 func (ctrl *UserController) DeleteUser(c *gin.Context) {
 	username := c.GetHeader("X-Auth-Username")
 	if username == "" {
