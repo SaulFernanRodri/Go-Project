@@ -5,7 +5,6 @@ go 1.23.2
 require (
 	github.com/dop251/goja v0.0.0-20241009100908-5f46f2705ca3
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12

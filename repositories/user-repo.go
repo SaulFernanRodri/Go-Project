@@ -11,7 +11,7 @@ type UserRepoInterface interface {
 	Create(user *models.User) error
 	Update(id uint64, user *models.User) (*models.User, error)
 	Delete(id uint64) error
-	FindByEmail(email string, user *models.User) error
+	GetByUsername(username string) ([]models.User, error)
 }
 
 type UserRepo struct {
@@ -39,10 +39,6 @@ func (r *UserRepo) Update(id uint64, user *models.User) (*models.User, error) {
 	}
 
 	existingUser.Name = user.Name
-	existingUser.Email = user.Email
-	existingUser.Password = user.Password
-	existingUser.Milsymbol = user.Milsymbol
-	existingUser.CSV = user.CSV
 
 	if err := r.db.Save(&existingUser).Error; err != nil {
 		return nil, err
@@ -55,6 +51,8 @@ func (r *UserRepo) Delete(id uint64) error {
 	return r.db.Delete(&models.User{}, id).Error
 }
 
-func (repo *UserRepo) FindByEmail(email string, user *models.User) error {
-	return repo.db.Where("email = ?", email).First(user).Error
+func (r *UserRepo) GetByUsername(username string) ([]models.User, error) {
+	var users []models.User
+	err := r.db.Where("auth_username = ?", username).Find(&users).Error
+	return users, err
 }

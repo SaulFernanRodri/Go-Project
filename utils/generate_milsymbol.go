@@ -11,7 +11,7 @@ import (
 func GenerateMilsymbol(milsymbol models.Milsymbol) (string, error) {
 
 	// Leer el archivo JavaScript de milsymbol
-	jsFile, err := os.ReadFile("./web/pkg/utils/milsymbol.js")
+	jsFile, err := os.ReadFile("./utils/milsymbol.js")
 
 	if err != nil {
 
