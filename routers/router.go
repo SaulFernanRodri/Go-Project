@@ -31,19 +31,23 @@ func SetupRouter(userController *controllers.UserController) *gin.Engine {
 
 	//router.Use(middlewares.BasicAuth())
 
-	userRoutes := router.Group("/users")
+	api := router.Group("/api/v1")
 	{
-		userRoutes.GET("/", userController.GetAllUsers)
-		userRoutes.POST("/", userController.CreateUser)
-		userRoutes.PUT("/:id", userController.UpdateUser)
-		userRoutes.DELETE("/:id", userController.DeleteUser)
+		userRoutes := api.Group("/users")
+		{
+			userRoutes.GET("/", userController.GetAllUsers)
+			userRoutes.POST("/", userController.CreateUser)
+			userRoutes.PUT("/:id", userController.UpdateUser)
+			userRoutes.DELETE("/:id", userController.DeleteUser)
+		}
+
+		viewRoutes := api.Group("/view")
+		{
+			viewRoutes.GET("/", userController.ShowAllUsers)
+		}
 	}
 
-	viewRoutes := router.Group("/view")
-	{
-		viewRoutes.GET("/", userController.ShowAllUsers)
-	}
-
+	// Swagger route
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router
