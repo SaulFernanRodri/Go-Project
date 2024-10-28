@@ -8,7 +8,7 @@ import (
 
 type UserServiceInterface interface {
 	GetAllUsers() ([]models.User, error)
-	CreateUser(user *models.User) (*models.User, error)
+	CreateUser(user *models.UserRequest) (*models.UserRequest, error)
 	UpdateUser(id uint64, user *models.User) (*models.User, error)
 	DeleteUser(id uint64) error
 	GetByUsername(username string) ([]models.User, error)
@@ -26,23 +26,23 @@ func (s *UserService) GetAllUsers() ([]models.User, error) {
 	return s.repo.GetAll()
 }
 
-func (s *UserService) CreateUser(UserRequest *models.UserRequest) (*models.UserRequest, error) {
+func (s *UserService) CreateUser(userRequest *models.UserRequest) (*models.UserRequest, error) {
 
-	csvPath, error := utils.GenerateMilsymbol(UserRequest.Milsymbol)
+	csvPath, error := utils.GenerateMilsymbol(userRequest.Milsymbol)
 	if error != nil {
-		return UserRequest, error
+		return userRequest, error
 	}
 	user := &models.User{
-		Name:         UserRequest.Name,
+		Name:         userRequest.Name,
 		CSV:          csvPath,
-		AuthUsername: UserRequest.AuthUsername,
+		AuthUsername: userRequest.AuthUsername,
 	}
 
 	if err := s.repo.Create(user); err != nil {
-		return UserRequest, err
+		return userRequest, err
 	}
 
-	return UserRequest, nil
+	return userRequest, nil
 }
 
 func (s *UserService) UpdateUser(id uint64, user *models.User) (*models.User, error) {
