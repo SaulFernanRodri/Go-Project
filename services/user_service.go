@@ -15,10 +15,10 @@ type UserServiceInterface interface {
 }
 
 type UserService struct {
-	repo *repositories.UserRepo
+	repo repositories.UserRepoInterface
 }
 
-func NewUserService(repo *repositories.UserRepo) *UserService {
+func NewUserService(repo repositories.UserRepoInterface) *UserService {
 	return &UserService{repo: repo}
 }
 

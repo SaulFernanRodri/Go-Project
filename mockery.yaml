@@ -1,0 +1,11 @@
+packages:
+  - name: ./services
+    output: ./mocks
+    interfaces:
+      - name: UserServiceInterface
+        filename: user_service_mock.go  
+  - name: ./repositories
+    output: ./mocks
+    interfaces:
+      - name: UserRepoInterface
+        filename: user_repo_mock.go 

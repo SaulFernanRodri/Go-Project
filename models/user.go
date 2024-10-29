@@ -9,7 +9,6 @@ type User struct {
 
 type UserRequest struct {
 	Name         string    `json:"name"`
-	CSV          string    `json:"csv"`
 	AuthUsername string    `json:"auth_username"`
 	Milsymbol    Milsymbol `json:"mil_symbol"`
 }
