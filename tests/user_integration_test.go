@@ -68,6 +68,7 @@ func TestCreateUserIntegration(t *testing.T) {
 
 	req, _ := http.NewRequest("POST", "/users", strings.NewReader(userRequest))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Auth-Username", "testuser")
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
@@ -89,16 +90,17 @@ func TestGetAllUsersIntegration(t *testing.T) {
 	router := setupRouter()
 	router.GET("/users", userController.GetAllUsers)
 
-	db.Create(&models.User{Name: "John Doe"})
-	db.Create(&models.User{Name: "Jane Doe"})
+	db.Create(&models.User{Name: "John Doe", AuthUsername: "testuser"})
+	db.Create(&models.User{Name: "Jane Doe 2", AuthUsername: "testuser"})
 
 	req, _ := http.NewRequest("GET", "/users", nil)
+	req.Header.Set("X-Auth-Username", "testuser")
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Contains(t, w.Body.String(), "John Doe")
-	assert.Contains(t, w.Body.String(), "Jane Doe")
+	assert.Contains(t, w.Body.String(), "Jane Doe 2")
 }
 
 func TestUpdateUserIntegration(t *testing.T) {
@@ -110,12 +112,14 @@ func TestUpdateUserIntegration(t *testing.T) {
 	router := setupRouter()
 	router.PUT("/users/:id", userController.UpdateUser)
 
-	user := models.User{Name: "John Doe"}
+	user := models.User{Name: "John Doe", AuthUsername: "testuser"}
 	db.Create(&user)
 
 	userUpdate := `{"name": "Updated Name"}`
 	req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(int(user.ID)), strings.NewReader(userUpdate))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Auth-Username", "testuser")
+
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
@@ -136,10 +140,11 @@ func TestDeleteUserIntegration(t *testing.T) {
 	router := setupRouter()
 	router.DELETE("/users/:id", userController.DeleteUser)
 
-	user := models.User{Name: "John Doe"}
+	user := models.User{Name: "John Doe", AuthUsername: "testuser"}
 	db.Create(&user)
 
 	req, _ := http.NewRequest("DELETE", "/users/"+strconv.Itoa(int(user.ID)), nil)
+	req.Header.Set("X-Auth-Username", "testuser")
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
