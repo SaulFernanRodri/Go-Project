@@ -5,6 +5,7 @@ import (
 	"myproject/models"
 	"myproject/services"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,49 +32,38 @@ func TestCreateUser(t *testing.T) {
 	mockRepo := mocks.NewUserRepoInterface(t)
 	service := services.NewUserService(mockRepo)
 
-	userRequest := &models.UserRequest{
-		Name: "John",
-		Milsymbol: models.Milsymbol{
-			SymbolCode: "SFG-UCI---D",
-			Size:       32,
-			Frame:      true,
-			Fill:       "#0000FF",
-			InfoFields: models.InfoFields{
-				UniqueDesignation: "Unit-1",
-				HigherFormation:   "Division-X",
-				StaffComments:     "No comments",
-				Speed:             "20km/h",
-			},
-			Quantity:  5,
-			Direction: 90,
-			Status:    "active",
-		},
+	userRequest := &models.User{
+		AuthUsername: "john",
+		Name:         "John Doe",
+		BirthDate:    time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC),
+		Email:        "john.doe@example.com",
+		Address:      "123 Main St",
+		Phone:        "123456789",
 	}
 
-	expectedUser := &models.UserRequest{
-		Name: "John",
-		Milsymbol: models.Milsymbol{
-			SymbolCode: "SFG-UCI---D",
-			Size:       32,
-			Frame:      true,
-			Fill:       "#0000FF",
-			InfoFields: models.InfoFields{
-				UniqueDesignation: "Unit-1",
-				HigherFormation:   "Division-X",
-				StaffComments:     "No comments",
-				Speed:             "20km/h",
-			},
-			Quantity:  5,
-			Direction: 90,
-			Status:    "active",
-		},
+	expectedUser := &models.User{
+		AuthUsername: "john",
+		Name:         "John Doe",
+		BirthDate:    time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC),
+		Email:        "john.doe@example.com",
+		Address:      "123 Main St",
+		Phone:        "123456789",
 	}
+
+	// Mock the Create method on the repository to return nil error
 	mockRepo.On("Create", mock.AnythingOfType("*models.User")).Return(nil)
 
+	// Call the CreateUser method on the service with the user request
 	createdUser, err := service.CreateUser(userRequest)
 
+	// Assertions to verify no errors and the created user matches the expected user
 	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, createdUser)
+	assert.Equal(t, expectedUser.AuthUsername, createdUser.AuthUsername)
+	assert.Equal(t, expectedUser.Name, createdUser.Name)
+	assert.Equal(t, expectedUser.BirthDate, createdUser.BirthDate)
+	assert.Equal(t, expectedUser.Email, createdUser.Email)
+	assert.Equal(t, expectedUser.Address, createdUser.Address)
+	assert.Equal(t, expectedUser.Phone, createdUser.Phone)
 }
 
 func TestUpdateUser(t *testing.T) {

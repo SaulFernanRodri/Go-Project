@@ -3,12 +3,11 @@ package services
 import (
 	"myproject/models"
 	"myproject/repositories"
-	"myproject/utils"
 )
 
 type UserServiceInterface interface {
 	GetAllUsers() ([]models.User, error)
-	CreateUser(user *models.UserRequest) (*models.UserRequest, error)
+	CreateUser(user *models.User) (*models.User, error)
 	UpdateUser(id uint64, user *models.User) (*models.User, error)
 	DeleteUser(id uint64) error
 	GetByUsername(username string) ([]models.User, error)
@@ -26,23 +25,8 @@ func (s *UserService) GetAllUsers() ([]models.User, error) {
 	return s.repo.GetAll()
 }
 
-func (s *UserService) CreateUser(userRequest *models.UserRequest) (*models.UserRequest, error) {
-
-	csvPath, error := utils.GenerateMilsymbol(userRequest.Milsymbol)
-	if error != nil {
-		return userRequest, error
-	}
-	user := &models.User{
-		Name:         userRequest.Name,
-		CSV:          csvPath,
-		AuthUsername: userRequest.AuthUsername,
-	}
-
-	if err := s.repo.Create(user); err != nil {
-		return userRequest, err
-	}
-
-	return userRequest, nil
+func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
+	return s.repo.Create(user)
 }
 
 func (s *UserService) UpdateUser(id uint64, user *models.User) (*models.User, error) {

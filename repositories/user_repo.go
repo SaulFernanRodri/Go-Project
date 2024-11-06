@@ -8,7 +8,7 @@ import (
 
 type UserRepoInterface interface {
 	GetAll() ([]models.User, error)
-	Create(user *models.User) error
+	Create(user *models.User) (*models.User, error)
 	Update(id uint64, user *models.User) (*models.User, error)
 	Delete(id uint64) error
 	GetByUsername(username string) ([]models.User, error)
@@ -28,8 +28,9 @@ func (r *UserRepo) GetAll() ([]models.User, error) {
 	return users, err
 }
 
-func (r *UserRepo) Create(user *models.User) error {
-	return r.db.Create(user).Error
+func (r *UserRepo) Create(user *models.User) (*models.User, error) {
+	err := r.db.Create(user).Error
+	return user, err
 }
 
 func (r *UserRepo) Update(id uint64, user *models.User) (*models.User, error) {

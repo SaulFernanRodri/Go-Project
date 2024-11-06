@@ -12,8 +12,8 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -22,7 +22,6 @@ var userRepo *repositories.UserRepo
 var userService *services.UserService
 var userController *controllers.UserController
 
-// Configuración de la base de datos en memoria y migración de modelos
 func setupTestDB() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
@@ -32,7 +31,6 @@ func setupTestDB() *gorm.DB {
 	return db
 }
 
-// Configuración del router para pruebas
 func setupRouter() *gin.Engine {
 	router := gin.Default()
 	return router
@@ -48,22 +46,12 @@ func TestCreateUserIntegration(t *testing.T) {
 	router.POST("/users", userController.CreateUser)
 
 	userRequest := `{
+		"auth_username": "testuser",
 		"name": "John Doe",
-		"mil_symbol": {
-			"symbolcode": "SFG-UCI---D",
-			"size": 32,
-			"frame": true,
-			"fill": "#0000FF",
-			"info_fields": {
-				"uniqueDesignation": "Unit-1",
-				"higherFormation": "Division-X",
-				"staffComments": "No comments",
-				"speed": "20km/h"
-			},
-			"quantity": 5,
-			"direction": 90,
-			"status": "active"
-		}
+		"birth_date": "1990-01-01T00:00:00Z",
+		"email": "john.doe@example.com",
+		"address": "123 Main St",
+		"phone": "123456789"
 	}`
 
 	req, _ := http.NewRequest("POST", "/users", strings.NewReader(userRequest))
@@ -79,6 +67,9 @@ func TestCreateUserIntegration(t *testing.T) {
 	result := db.First(&user)
 	assert.NoError(t, result.Error)
 	assert.Equal(t, "John Doe", user.Name)
+	assert.Equal(t, "testuser", user.AuthUsername)
+	assert.Equal(t, "john.doe@example.com", user.Email)
+	assert.Equal(t, "123456789", user.Phone)
 }
 
 func TestGetAllUsersIntegration(t *testing.T) {
@@ -90,8 +81,8 @@ func TestGetAllUsersIntegration(t *testing.T) {
 	router := setupRouter()
 	router.GET("/users", userController.GetAllUsers)
 
-	db.Create(&models.User{Name: "John Doe", AuthUsername: "testuser"})
-	db.Create(&models.User{Name: "Jane Doe 2", AuthUsername: "testuser"})
+	db.Create(&models.User{Name: "John Doe", AuthUsername: "testuser", Email: "aaa@email.com", Phone: "123456789"})
+	db.Create(&models.User{Name: "Jane Doe 2", AuthUsername: "testuser", Email: "a@email.com", Phone: "123456789"})
 
 	req, _ := http.NewRequest("GET", "/users", nil)
 	req.Header.Set("X-Auth-Username", "testuser")
@@ -115,7 +106,13 @@ func TestUpdateUserIntegration(t *testing.T) {
 	user := models.User{Name: "John Doe", AuthUsername: "testuser"}
 	db.Create(&user)
 
-	userUpdate := `{"name": "Updated Name"}`
+	userUpdate := `{
+		"name": "Updated Name",
+		"birth_date": "1990-01-01T00:00:00Z",
+		"email": "aaa@gmail.com",
+		"address": "123 Main St",
+		"phone": "123456789"
+	}`
 	req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(int(user.ID)), strings.NewReader(userUpdate))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Auth-Username", "testuser")

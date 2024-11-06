@@ -71,7 +71,7 @@ func (ctrl *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	var user models.UserRequest
+	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

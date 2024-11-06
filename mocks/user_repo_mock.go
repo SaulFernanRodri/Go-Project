@@ -14,7 +14,7 @@ type UserRepoInterface struct {
 }
 
 // Create provides a mock function with given fields: user
-func (_m *UserRepoInterface) Create(user *models.User) error {
+func (_m *UserRepoInterface) Create(user *models.User) (*models.User, error){
 	ret := _m.Called(user)
 
 	if len(ret) == 0 {
@@ -28,7 +28,7 @@ func (_m *UserRepoInterface) Create(user *models.User) error {
 		r0 = ret.Error(0)
 	}
 
-	return r0
+	return user, r0
 }
 
 // Delete provides a mock function with given fields: id

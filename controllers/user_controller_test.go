@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -48,57 +49,42 @@ func TestCreateUser(t *testing.T) {
 	mockService := mocks.NewUserServiceInterface(t)
 	controller := controllers.NewUserController(mockService)
 
-	userRequest := `{
+	user := `{
+		"auth_username": "john",
 		"name": "John Doe",
-		"mil_symbol": {
-			"symbolcode": "SFG-UCI---D",
-			"size": 32,
-			"frame": true,
-			"fill": "#0000FF",
-			"info_fields": {
-				"uniqueDesignation": "Unit-1",
-				"higherFormation": "Division-X",
-				"staffComments": "No comments",
-				"speed": "20km/h"
-			},
-			"quantity": 5,
-			"direction": 90,
-			"status": "active"
-		}
+		"birth_date": "1990-01-01T00:00:00Z",
+		"email": "john.doe@example.com",
+		"address": "123 Main St",
+		"phone": "123456789"
 	}`
 
-	mockService.On("CreateUser", mock.AnythingOfType("*models.UserRequest")).Return(&models.UserRequest{
-		Name: "John Doe",
-		Milsymbol: models.Milsymbol{
-			SymbolCode: "SFG-UCI---D",
-			Size:       32,
-			Frame:      true,
-			Fill:       "#0000FF",
-			InfoFields: models.InfoFields{
-				UniqueDesignation: "Unit-1",
-				HigherFormation:   "Division-X",
-				StaffComments:     "No comments",
-				Speed:             "20km/h",
-			},
-			Quantity:  5,
-			Direction: 90,
-			Status:    "active",
-		},
+	mockService.On("CreateUser", mock.AnythingOfType("*models.User")).Return(&models.User{
+		ID:           1,
 		AuthUsername: "john",
+		Name:         "John Doe",
+		BirthDate:    time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC),
+		Email:        "john.doe@example.com",
+		Address:      "123 Main St",
+		Phone:        "123456789",
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}, nil)
 
 	router := setupRouter()
 	router.POST("/users", controller.CreateUser)
 
-	req, _ := http.NewRequest("POST", "/users", strings.NewReader(userRequest))
-	req.Header.Set("X-Auth-Username", "john")
+	req, _ := http.NewRequest("POST", "/users", strings.NewReader(user))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Auth-Username", "john")
+
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Contains(t, w.Body.String(), "John Doe")
-	assert.Contains(t, w.Body.String(), "SFG-UCI---D")
+	assert.Contains(t, w.Body.String(), "john.doe@example.com")
+	assert.Contains(t, w.Body.String(), "123 Main St")
+	assert.Contains(t, w.Body.String(), "123456789")
 }
 
 func TestUpdateUser(t *testing.T) {
@@ -107,12 +93,23 @@ func TestUpdateUser(t *testing.T) {
 
 	id := 1
 	mockService.On("GetByUsername", "john").Return([]models.User{{ID: uint64(id)}}, nil)
-	mockService.On("UpdateUser", uint64(id), mock.AnythingOfType("*models.User")).Return(&models.User{Name: "Updated Name"}, nil)
-
+	mockService.On("UpdateUser", uint64(id), mock.AnythingOfType("*models.User")).Return(&models.User{
+		ID:        uint64(id),
+		Name:      "Updated Name",
+		BirthDate: time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC),
+		Email:     "updated.email@example.com",
+		Phone:     "987654321",
+		UpdatedAt: time.Now(),
+	}, nil)
 	router := setupRouter()
 	router.PUT("/users/:id", controller.UpdateUser)
 
-	userUpdate := `{"name": "Updated Name"}`
+	userUpdate := `{
+		"name": "Updated Name",
+		"birth_date": "1990-01-01T00:00:00Z",
+		"email": "updated.email@example.com",
+		"phone": "987654321"
+	}`
 	req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(id), strings.NewReader(userUpdate))
 	req.Header.Set("X-Auth-Username", "john")
 	req.Header.Set("Content-Type", "application/json")

@@ -14,27 +14,27 @@ type UserServiceInterface struct {
 }
 
 // CreateUser provides a mock function with given fields: user
-func (_m *UserServiceInterface) CreateUser(user *models.UserRequest) (*models.UserRequest, error) {
+func (_m *UserServiceInterface) CreateUser(user *models.User) (*models.User, error) {
 	ret := _m.Called(user)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateUser")
 	}
 
-	var r0 *models.UserRequest
+	var r0 *models.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*models.UserRequest) (*models.UserRequest, error)); ok {
+	if rf, ok := ret.Get(0).(func(*models.User) (*models.User, error)); ok {
 		return rf(user)
 	}
-	if rf, ok := ret.Get(0).(func(*models.UserRequest) *models.UserRequest); ok {
+	if rf, ok := ret.Get(0).(func(*models.User) *models.User); ok {
 		r0 = rf(user)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.UserRequest)
+			r0 = ret.Get(0).(*models.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*models.UserRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(*models.User) error); ok {
 		r1 = rf(user)
 	} else {
 		r1 = ret.Error(1)
